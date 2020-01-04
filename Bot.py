@@ -7,7 +7,7 @@ import time
 # You must make a Keys.py with the keys in the auth variables
 Time = datetime.datetime.now()
 current_time = Time.strftime('%H:%M')
-tweet_current_time = Time.strftime('%I%p')
+tweet_current_time = Time.strftime('%I:%M%p')
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_key, access_secret)
@@ -16,13 +16,13 @@ print(current_time, 'Starting bot...')
 
 
 def send_population():
-    contents = "The current population of Toontown Rewritten at {} is {} toons."
-    tweet_info = contents.format(tweet_current_time, population)
-    print(tweet_info)
-    api.update_status(tweet_info)
+    pop_contents = "The current population of Toontown Rewritten at {} is {} toons."
+    pop_tweet_info = pop_contents.format(tweet_current_time, population)
+    print(pop_tweet_info)
+    api.update_status(pop_tweet_info)
+    time.sleep(1800)
 
 
-if __name__ == "__main__":
+while True:
     send_population()
-    time.sleep(3600)
 
