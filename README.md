@@ -1,6 +1,6 @@
 # TTR Population Bot
 
-The current working twitter bot can be found at https://twitter.com/TTR_API_Bot
+The current working twitter bot can be found at https://twitter.com/TTR_Population
 
 <h2>Built With</h2>
 
