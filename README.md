@@ -1,4 +1,4 @@
-# Toontown-Rewritten-API-Bot
+# TTR Population Bot
 
 The current working twitter bot can be found at https://twitter.com/TTR_API_Bot
 
