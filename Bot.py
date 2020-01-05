@@ -49,3 +49,4 @@ scheduler = BlockingScheduler()
 scheduler.add_job(send_population_tweet, 'interval', hours=0.01)  # Sends the automated tweet every 30 minutes
 scheduler.add_job(follow_followers, 'interval', hours=0.1)  # Follows back any followers every 6 minutes
 scheduler.start()
+
