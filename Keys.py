@@ -4,6 +4,6 @@ access_key = 'YOUR_ACCESS_KEY'
 access_secret = 'YOUR_ACCESS_SECRET_KEY'
 
 headers_dict = headers = {
-    'User-Agent': 'TTR Population Tracker(@TTR_Population)\n(A twitter bot run by @miguel_TTR)\nGitHub repository: https://github.com/chrisd149/Toontown-Rewritten-API-Bot',
+    'User-Agent': 'TTR Population Tracker(@TTR_Population)\n(A twitter bot run by @miguel_TTR)\nGitHub repository: https://github.com/chrisd149/TTR-Population-Bot',
     'From': 'christianmigueldiaz@gmail.com'
 }
