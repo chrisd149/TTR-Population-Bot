@@ -11,7 +11,7 @@ import statistics
 
 startTime = datetime.today()
 
-population_list = []
+population_list = [1605, 1240, 903, 660, 432, 337, 334, 292, 354, 442, 534, 717, 937, 1015, 1166, 1359, 1475, 1579]
 
 headers = {
     'User-Agent': 'TTR Population Tracker(@TTR_Population) (A twitter bot run by @miguel_TTR) GitHub repository: '
@@ -58,12 +58,14 @@ class Bot:
 
     @staticmethod
     def send_population_tweet():
+        global startTime
         contents = f"{current_day} | @Toontown Rewritten had an average population of {round(statistics.mean(population_list))} " \
             f"toons, with a peak of {max(population_list)} toons and a minimum of {min(population_list)} toons."
         # load image
         image = f'Plot {current_day}.png'  # finds the graph we saved
 
         api.update_with_media(image, contents)  # posts the tweet :)
+        startTime = datetime.today()
 
     @staticmethod
     def follow_followers():
@@ -74,7 +76,7 @@ class Bot:
 
     def run_scheduler(self):
         scheduler.add_job(self.send_population_tweet, 'interval', hours=24)  # Sends the automated tweet every day
-        scheduler.add_job(self.get_population, 'interval', hours=1.001)  # Sends HTTP GET request to API
+        scheduler.add_job(self.get_population, 'interval', hours=1.0005)  # Sends HTTP GET request to API
         scheduler.add_job(self.follow_followers, 'interval', hours=0.1)  # Follows back any followers every 6 minutes
         scheduler.add_job(if_day, 'interval', hours=0.0005)  # Checks if the day has changed
 
@@ -101,7 +103,6 @@ def if_day():
     if startTime.date() != datetime.today().date():
         print(f'It is now {datetime.today().date()}')
         daily_grapher()
-        startTime = datetime.today()
         population_list = []
     else:
         return
