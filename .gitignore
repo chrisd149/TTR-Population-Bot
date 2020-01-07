@@ -1,5 +1,7 @@
 *.xml
 *.iml
 *.pyc
+*.png
 
 Keys.py
+data.txt

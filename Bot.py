@@ -11,7 +11,7 @@ import statistics
 
 startTime = datetime.today()
 
-population_list = []
+population_list = [1605, 1240, 903, 660, 432, 337, 334, 292, 354, 442, 534, 717, 937, 1015, 1166, 1359, 1475, 1579]
 
 headers = {
     'User-Agent': 'TTR Population Tracker(@TTR_Population) (A twitter bot run by @miguel_TTR) GitHub repository: '
@@ -58,53 +58,65 @@ class Bot:
 
     @staticmethod
     def send_population_tweet():
+        global Time, current_day, current_time, population_list, startTime
         contents = f"{current_day} | @Toontown Rewritten had an average population of {round(statistics.mean(population_list))} " \
             f"toons, with a peak of {max(population_list)} toons and a minimum of {min(population_list)} toons."
         # load image
         image = f'Plot {current_day}.png'  # finds the graph we saved
 
         api.update_with_media(image, contents)  # posts the tweet :)
+        startTime = datetime.today()
+        f = open('data.txt', 'a+')
+        f.write(f'{current_day} : {population_list}')
+        population_list = []
+        get_time()
+        print(f'Sent tweet at {current_time}')
 
     @staticmethod
     def follow_followers():
+        global Time, current_day, current_time
         for follower in tweepy.Cursor(api.followers).items():
             if not follower.following:
                 logger.info(f"Following {follower.name} at {current_time}")
                 follower.follow()
 
     def run_scheduler(self):
-        scheduler.add_job(self.send_population_tweet, 'interval', hours=24)  # Sends the automated tweet every day
-        scheduler.add_job(self.get_population, 'interval', hours=1.001)  # Sends HTTP GET request to API
+        scheduler.add_job(self.get_population, 'interval', hours=1.0005)  # Sends HTTP GET request to API
         scheduler.add_job(self.follow_followers, 'interval', hours=0.1)  # Follows back any followers every 6 minutes
-        scheduler.add_job(if_day, 'interval', hours=0.0005)  # Checks if the day has changed
+        scheduler.add_job(self.if_day, 'interval', hours=0.001)  # Checks if the day has changed
+
+    def daily_grapher(self):
+        global Time, current_day, current_time
+        # Prepare the data
+        y = np.array(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
+                      '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
+        x = population_list
+        plt.title(f'Population of Toontown every hour on {current_day}')
+        plt.ylabel('Population of Toons online')
+        plt.xlabel('Time (Eastern Daylight (GMT-5))')
+        # Plot the data
+        plt.plot(y, x)
+
+        plt.draw()
+        plt.savefig(f'Plot {current_day}.png', dpi=150)
+        logger.info(F"Drew daily graph at {current_time}, {current_day}")
+        self.send_population_tweet()
+
+    def if_day(self):
+        global startTime
+        global population_list
+        if startTime.date() != datetime.today().date():
+            print(f'It is now {datetime.today().date()}')
+            self.daily_grapher()
+        else:
+            return
 
 
-def daily_grapher():
-    # Prepare the data
-    y = np.array(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
-                  '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
-    x = population_list
-    plt.title(f'Population of Toontown every hour on {current_day}')
-    plt.ylabel('Population of Toons online')
-    plt.xlabel('Time (Eastern Daylight (GMT-5))')
-    # Plot the data
-    plt.plot(y, x)
-
-    plt.draw()
-    plt.savefig(f'Plot {current_day}.png', dpi=150)
-    logger.info(F"Drew daily graph at {current_time}, {current_day}")
-
-
-def if_day():
-    global startTime
-    global population_list
-    if startTime.date() != datetime.today().date():
-        print(f'It is now {datetime.today().date()}')
-        daily_grapher()
-        startTime = datetime.today()
-        population_list = []
-    else:
-        return
+def get_time():
+    global Time, current_day, current_time
+    Time = datetime.now()
+    current_time = Time.strftime('%H:%M:%S')
+    current_day = Time.strftime('%A, %B %d')
 
 
 Bot()
