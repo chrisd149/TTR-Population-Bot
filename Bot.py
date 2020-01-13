@@ -176,6 +176,8 @@ def get_time():
 
 get_time()
 logger.info(F"Starting bot at {current_time}, {current_day}")
+api.update_profile(description=f"A bot created by @miguel_TTR. I post a graph of @Toontown Rewritten's population every "
+                               f"hour every day. Bot was turned online on {current_day}, {Time.strftime('%I:%M%p')} EST")
 
 Bot()
 scheduler.start()
