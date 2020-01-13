@@ -38,6 +38,7 @@ class Bot:
         global population_list
         self.get_population()
         self.run_scheduler()
+        self.interact_tweets()
         self.weekly_plt = plt
 
     def get_population(self):
@@ -54,7 +55,8 @@ class Bot:
     def send_population_tweet():
         global population_list, startTime, weekly_population_list
         contents = f"{current_day} | @Toontown Rewritten had an average population of {round(statistics.mean(population_list))} " \
-            f"toons, with a peak of {max(population_list)} toons and a minimum of {min(population_list)} toons."
+            f"toons, with a peak of {max(population_list)} toons and a minimum of {min(population_list)} toons. All times EST." \
+            f"\n #toontown #ttr #toontownrewritten"
         # load image
         image = f'Plot {current_day}.png'  # finds the graph we saved
 
@@ -70,9 +72,9 @@ class Bot:
         global weekly_population_list
         contents = f"Weekly Post | {current_day} | @Toontown Rewritten had an average population of {round(statistics.mean(weekly_population_list))} " \
             f"toons, with a peak of {max(weekly_population_list)} toons and a minimum of {min(weekly_population_list)} " \
-            f"toons through last week."
+            f"toons through last week. All times EST. \n #toontown #ttr #toontownrewritten"
         # load image
-        image = f'Plot {start_of_week}.png'  # finds the graph we saved
+        image = f'Plot {current_day} week.png'  # finds the graph we saved
 
         api.update_with_media(image, contents)  # posts the tweet :)
         f = open('data.txt', 'a+')
@@ -82,16 +84,26 @@ class Bot:
         weekly_population_list = []
 
     @staticmethod
-    def follow_followers():
-        for follower in tweepy.Cursor(api.followers).items():
+    def interact_tweets():
+        tweets = api.home_timeline(count=1)
+        tweet = tweets[0]
+        if not tweet.favorited:
+            tweet.favorite()
+            print(f"Liking tweet {tweet.id} of {tweet.author.name}")
+        else:
+            print(f"No tweets to like at {current_time}")
+
+        for follower in tweepy.Cursor(api.followers).items(1):
             if not follower.following:
-                logger.info(f"Following {follower.name} at {current_time}")
+                print(f"Following {follower.name} at {current_time}")
                 follower.follow()
+            else:
+                print(f"No new followers to follow at {current_time}")
 
     def run_scheduler(self):
         scheduler.add_job(self.get_population, 'interval', hours=1.0005)  # Sends HTTP GET request to API
-        scheduler.add_job(self.follow_followers, 'interval', hours=0.1)  # Follows back any followers every 6 minutes
         scheduler.add_job(self.if_day, 'interval', hours=0.001)  # Checks if the day has changed
+        scheduler.add_job(self.interact_tweets, 'interval', hours=0.16667)  # Likes a tweet every 15 minutes and follows followers
 
     def daily_grapher(self):
         # Prepare the data
