@@ -103,16 +103,16 @@ class Bot:
     def run_scheduler(self):
         scheduler.add_job(self.get_population, 'interval', hours=1.0005)  # Sends HTTP GET request to API
         scheduler.add_job(self.if_day, 'interval', hours=0.001)  # Checks if the day has changed
-        scheduler.add_job(self.interact_tweets, 'interval', hours=0.16667)  # Likes a tweet every 15 minutes and follows followers
+        scheduler.add_job(self.interact_tweets, 'interval', hours=0.16667)  # Likes a tweet every 10 minutes and follows followers
 
     def daily_grapher(self):
         # Prepare the data
         y = np.array(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
                       '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
         x = population_list
-        plt.title(f'Population of Toontown every hour on {current_day}')
+        plt.title(f'Hourly population of Toontown on {current_day}')
         plt.ylabel('Population of Toons online')
-        plt.xlabel('Time (Eastern Daylight (GMT-5))')
+        plt.xlabel('Hour of Day (EST)')
         # Plot the data
         plt.plot(y, x)
 
@@ -127,9 +127,9 @@ class Bot:
         y = np.array(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13',
                       '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'])
         x = population_list
-        self.weekly_plt.title(f'Population of Toontown every hour, everyday of week {start_of_week.date()}')
+        self.weekly_plt.title(f'Hourly population of Toontown every day of week {start_of_week.date()} - {end_of_week.date()}')
         self.weekly_plt.ylabel('Population of Toons online')
-        self.weekly_plt.xlabel('Time (Eastern Daylight (GMT-5))')
+        self.weekly_plt.xlabel('Hour of Day (EST)')
         # Plot the data
         self.weekly_plt.plot(y, x, label=f'{current_day}')
 
