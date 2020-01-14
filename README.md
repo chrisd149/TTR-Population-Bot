@@ -1,6 +1,6 @@
 # TTR Population Bot
 
-This is a Tweepy bot that posts updated graphics of Toontown's population every hour of every day.  The bot uses the Tweepy module to connect to Twitter, follow back any followers, get the population information from [TTR's API](https://github.com/ToontownRewritten/api-doc/blob/master/population.md), and post the information in a graph every day.
+This is a Tweepy bot that posts updated graphics of Toontown's population every hour of every day.  The bot uses the Tweepy module to connect to Twitter, follow back any followers, get the population information from [TTR's API](https://github.com/ToontownRewritten/api-doc/blob/master/population.md), and post the information in a graph every day, and now every week!.
 
 The current working twitter bot can be found at https://twitter.com/TTR_Population.
 
