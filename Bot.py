@@ -38,7 +38,6 @@ class Bot:
         global population_list
         self.get_population()
         self.run_scheduler()
-        self.interact_tweets()
         self.weekly_plt = plt
 
     def get_population(self):
@@ -83,27 +82,9 @@ class Bot:
         print(contents)
         weekly_population_list = []
 
-    @staticmethod
-    def interact_tweets():
-        tweets = api.home_timeline(count=1)
-        tweet = tweets[0]
-        if not tweet.favorited:
-            tweet.favorite()
-            print(f"Liking tweet {tweet.id} of {tweet.author.name}")
-        else:
-            print(f"No tweets to like at {current_time}")
-
-        for follower in tweepy.Cursor(api.followers).items(1):
-            if not follower.following:
-                print(f"Following {follower.name} at {current_time}")
-                follower.follow()
-            else:
-                print(f"No new followers to follow at {current_time}")
-
     def run_scheduler(self):
         scheduler.add_job(self.get_population, 'interval', hours=1.0005)  # Sends HTTP GET request to API
         scheduler.add_job(self.if_day, 'interval', hours=0.001)  # Checks if the day has changed
-        scheduler.add_job(self.interact_tweets, 'interval', hours=0.16667)  # Likes a tweet every 10 minutes and follows followers
 
     def daily_grapher(self):
         # Prepare the data
