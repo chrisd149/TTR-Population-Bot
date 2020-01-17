@@ -1,6 +1,5 @@
 import tweepy
 from Keys import *
-import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 import requests
 import logging
@@ -8,6 +7,10 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import numpy as np
 import statistics
+from pytz import timezone
+
+# sets the the timezone to western US
+western = timezone('America/Los_Angeles')
 
 population_list = []
 weekly_population_list = []
@@ -54,24 +57,25 @@ class Bot:
     def send_population_tweet():
         global population_list, startTime, weekly_population_list
         contents = f"{current_day} | @Toontown Rewritten had an average population of {round(statistics.mean(population_list))} " \
-            f"toons, with a peak of {max(population_list)} toons and a minimum of {min(population_list)} toons. All times EST." \
+            f"toons, with a peak of {max(population_list)} toons and a minimum of {min(population_list)} toons. All times PST." \
             f"\n #toontown #ttr #toontownrewritten"
         # load image
         image = f'Plot {current_day}.png'  # finds the graph we saved
 
         api.update_with_media(image, contents)  # posts the tweet :)
         print(contents)
-        startTime = datetime.today()
+        startTime = datetime.astimezone(western).today()
         print("Sent daily tweet!")
         population_list = []
         get_time()
+        plt.close()
 
     @staticmethod
     def send_week_population_tweet():
         global weekly_population_list
         contents = f"Weekly Post | {current_day} | @Toontown Rewritten had an average population of {round(statistics.mean(weekly_population_list))} " \
             f"toons, with a peak of {max(weekly_population_list)} toons and a minimum of {min(weekly_population_list)} " \
-            f"toons through last week. All times EST. \n #toontown #ttr #toontownrewritten"
+            f"toons through last week. All times PST. \n #toontown #ttr #toontownrewritten"
         # load image
         image = f'Plot {current_day} week.png'  # finds the graph we saved
 
@@ -99,7 +103,6 @@ class Bot:
 
         plt.draw()
         plt.savefig(f'Plot {current_day}.png', dpi=250)
-        plt.clf()
         logger.info(F"Drew daily graph at {current_time}, {current_day}")
         self.send_population_tweet()
 
@@ -110,7 +113,7 @@ class Bot:
         x = population_list
         self.weekly_plt.title(f'Hourly population of Toontown every day of week {start_of_week.date()} - {end_of_week.date()}')
         self.weekly_plt.ylabel('Population of Toons online')
-        self.weekly_plt.xlabel('Hour of Day (EST)')
+        self.weekly_plt.xlabel('Hour of Day (PST)')
         # Plot the data
         self.weekly_plt.plot(y, x, label=f'{current_day}')
 
@@ -121,21 +124,29 @@ class Bot:
         self.weekly_plt.legend(loc='lower right', fontsize = 'x-small', frameon=False)
         self.weekly_plt.savefig(f'Plot {current_day} week.png', dpi=250)
         logger.info(F"Drew weekly graph at {current_time}, {current_day}")
-        self.weekly_plt.clf()
+        self.weekly_plt.close()
         self.send_week_population_tweet()
 
     def if_day(self):
-        global population_list
-        if startTime.date() != datetime.today().date():
-            print(f'It is now {datetime.today().date()}')
-            self.weekly_grapher()
+        global population_list, western
+        if startTime.date() == datetime.today().astimezone(western).date():
+            print(f'It is now {datetime.today().astimezone(western).date()}')
+            Time = datetime.now(western)
+            api.update_profile(
+                description=f"A bot created by @miguel_TTR. I post a graph of @Toontown Rewritten's population every "
+                f"hour every day. Bot is online as of {datetime.today().astimezone(western).strftime('%b, %d')}, "
+                f"{Time.astimezone(western).strftime('%I:%M:%S%p')} PST"
+            )
+            print(current_time)
+            # self.weekly_grapher()
             self.daily_grapher()
-            self.if_week()
+            # self.if_week()
+
         else:
             return
 
     def if_week(self):
-        if start_of_week.date() == datetime.today().date():
+        if start_of_week.date() == datetime.today().astimezone(western).date():
             self.weekly_grapher_save()
             f = open('data.txt', 'a+')
             f.write(f'\nPopulation of Toontown through the week of {start_of_week.date()} - {end_of_week.date()}:')
@@ -145,10 +156,10 @@ class Bot:
 
 def get_time():
     global Time, current_day, current_time, date_str, date_obj, start_of_week, end_of_week, startTime
-    Time = datetime.now()
-    startTime = datetime.today()
-    date_str = str(datetime.today().date())
-    date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+    Time = datetime.now(western)
+    startTime = datetime.today().astimezone(western)
+    date_str = str(datetime.today().astimezone(western).date())
+    date_obj = datetime.strptime(date_str, '%Y-%m-%d').astimezone(western)
     start_of_week = date_obj - timedelta(days=date_obj.weekday())
     end_of_week = start_of_week + timedelta(days=6)
     current_time = Time.strftime('%H:%M:%S')
@@ -157,8 +168,6 @@ def get_time():
 
 get_time()
 logger.info(F"Starting bot at {current_time}, {current_day}")
-api.update_profile(description=f"A bot created by @miguel_TTR. I post a graph of @Toontown Rewritten's population every "
-                               f"hour every day. Bot was turned online on {current_day}, {Time.strftime('%I:%M%p')} EST")
 
 Bot()
 scheduler.start()
