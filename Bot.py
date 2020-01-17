@@ -104,6 +104,7 @@ class Bot:
         plt.draw()
         plt.savefig(f'Plot {current_day}.png', dpi=250)
         logger.info(F"Drew daily graph at {current_time}, {current_day}")
+        plt.close()
         self.send_population_tweet()
 
     def weekly_grapher(self):
@@ -129,7 +130,7 @@ class Bot:
 
     def if_day(self):
         global population_list, western
-        if startTime.date() == datetime.today().astimezone(western).date():
+        if startTime.date() != datetime.today().astimezone(western).date():
             print(f'It is now {datetime.today().astimezone(western).date()}')
             Time = datetime.now(western)
             api.update_profile(
@@ -137,7 +138,6 @@ class Bot:
                 f"hour every day. Bot is online as of {datetime.today().astimezone(western).strftime('%b, %d')}, "
                 f"{Time.astimezone(western).strftime('%I:%M:%S%p')} PST"
             )
-            print(current_time)
             # self.weekly_grapher()
             self.daily_grapher()
             # self.if_week()
