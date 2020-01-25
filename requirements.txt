@@ -1,5 +1,5 @@
 requests
 tweepy
 matplotlib
-pytz==2005k
+pytz
 APScheduler==2.1.2
