@@ -97,10 +97,11 @@ class Bot:
                 f'Hourly population of Toontown every day of week {start_of_week.date().strftime("%m-%d")} - {end_of_week.date().strftime("%m-%d")}')
             plt.ylabel('Population of Toons online')
             plt.xlabel('Hour of Day (PST)')
-            get_time()
+            
             # Plot the data
             plt.plot(y, x, label=f'{current_day}')
             plt.draw()
+            get_time()
             print(weekly_population_list)
             logger.info(f'Plotted data at {current_day}:{current_time}')
             population_list = []
@@ -147,4 +148,9 @@ get_time()
 logger.info(F"Starting bot at {current_time}, {current_day}")
 
 Bot()
+api.update_profile(
+                description=f"A bot created by @miguel_TTR. I post a graph of @Toontown Rewritten's population every "
+                f"hour every day. Bot is online as of {datetime.today().astimezone(western).strftime('%b, %d')}, "
+                f"{Time.astimezone(western).strftime('%I:%M:%S%p')} PST"
+            )
 scheduler.start()
