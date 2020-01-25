@@ -7,7 +7,7 @@ The current working twitter bot can be found at https://twitter.com/TTR_Populati
 ![lit](https://user-images.githubusercontent.com/48182689/71801237-4bfe3f00-3028-11ea-8a1f-62b81ae9b2f8.png)
 
 <h2>Installing</h2>
-A Keys.py file is need in order to run the bot.  This requires 4 keys from a twitter developer app, which can be obtained after making a [Twitter Developer Account](https://developer.twitter.com/en/apply-for-access).
+A Keys.py file is need in order to run the bot.  This requires 4 keys from a twitter developer app, which can be obtained after making a Twitter Developer Account at https://developer.twitter.com/en/apply-for-access.
 An example Keys.py file would look like this:
 
 ```
@@ -18,7 +18,7 @@ access_secret = 'uLsYd9xpZqYwdfdTuNe5ixtzDqA5rL7EwN4kf6EQFVrHi'
 ```
 
 <h3>Windows</h3>
-[Git](https://git-scm.com/downloads) is needed if you are cloning the repository in the command line. Follow the steps below in the command line. Skip the first line if you downloaded the zip file.
+Git https://git-scm.com/downloads is needed if you are cloning the repository in the command line. Follow the steps below in the command line. Skip the first line if you downloaded the zip file.
 
 ```
 git clone https//:github.com/chrisd149/TTR-Population-Bot.git
